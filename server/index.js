@@ -1,26 +1,14 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Fastify from "fastify";
-import pino from "pino";
-import { compatMJSModule } from "./utils/index.js";
+import { compatMJSModule, getLocalIP } from "./utils/index.js";
 import plugins from "./plugins/index.js";
+import getLogger from "./utils/logger.js";
 
 const { require, dirname } = compatMJSModule(import.meta.url);
-const CONFIG = require("../config/server.json");
-const destOpt = {
-  dest: path.resolve(dirname, "../logs/log.log"),
-  sync: false
-}
-const log = pino(
-  {
-    name: "my-logger",
-    level: "info",
-  },
-  pino.destination(1)
-);
-
+const { port, host } = require("../config/server.json");
 const fastify = Fastify({
-  logger: log,
+  logger: getLogger(),
 });
 
 plugins(fastify);
@@ -33,8 +21,8 @@ fastify.get("/", async (request, reply) => {
   return template;
 });
 
-fastify.listen({ port: CONFIG.port, host: CONFIG.host }, (err, address) => {
+fastify.listen({ port, host }, (err, address) => {
   if (err) throw err;
-  fastify.log.info(`Server is now listening on ${address}`);
-  console.log(`Server is now listening on ${address}`);
+  fastify.log.info("listening http://localhost:" + port);
+  fastify.log.info(`listening http://${getLocalIP()}:` + port);
 });

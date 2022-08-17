@@ -24,7 +24,9 @@
   "dependencies": {
     "@fastify/static": "^6.5.0",
     "fastify": "^4.4.0",
-    "pino": "^8.4.1"
+    "fastify-logger": "^1.0.1",
+    "pino": "^8.4.1",
+    "pino-pretty": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
